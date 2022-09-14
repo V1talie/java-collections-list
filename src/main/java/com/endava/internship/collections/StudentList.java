@@ -242,7 +242,7 @@ public class StudentList implements List<Student> {
 
     private class MyIterator implements ListIterator<Student> {
 
-        private int currentPosition;
+        int currentPosition;
 
         MyIterator() {
             currentPosition = 0;
