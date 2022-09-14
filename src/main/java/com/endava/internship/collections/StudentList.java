@@ -6,7 +6,7 @@ public class StudentList implements List<Student> {
 
     private int size;
     private int maxsize;
-    private final Student[] temp;
+    private Student[] temp;
 
     public StudentList() {
         this.maxsize = 10;
@@ -52,13 +52,23 @@ public class StudentList implements List<Student> {
 
     @Override
     public <T> T[] toArray(T[] ts) {
-        //TODO
-        return null;
+        //TODO - ??????
+        if(ts.length>=size){
+            int i =0;
+            for(; i < size; i++){
+                ts[i] = (T) temp[i];
+            }
+            for(;i< ts.length;i++){
+                ts[i] = null;
+            }
+        }
+        return ts;
     }
 
     @Override
     public boolean add(Student student) {
-        add(size, student);
+        if(size == maxsize){growSize();}
+        temp[size++] = student;
         return true;
     }
 
@@ -101,8 +111,28 @@ public class StudentList implements List<Student> {
 
     @Override
     public void add(int i, Student student) {
-        //TODO
-        size = size + 1;
+        //TODO - PARCA
+        if(size == maxsize){growSize();}
+        if(size+1<=maxsize && i<=size && i>=0){
+            for(int j=size-1;j>i;j--){
+                temp[j]=temp[j-1];
+            }
+            temp[i] = student;
+            size++;
+        }
+    }
+
+    public void growSize(){
+        this.maxsize = maxsize*2;
+        /*Student[] newArr = new Student[maxsize];
+        for(int i = 0; i < size; i++){
+            newArr[i] = temp[i];
+        }*/
+        temp = Arrays.copyOf(temp,maxsize);
+    }
+    public void growSize(int i){
+        this.maxsize = maxsize+i;
+        temp = Arrays.copyOf(temp,maxsize);
     }
 
     @Override
@@ -139,26 +169,47 @@ public class StudentList implements List<Student> {
 
     @Override
     public ListIterator<Student> listIterator() {
-        //TODO
-        return null;
+        //TODO - PARCA
+        return new MyIterator<>();
     }
 
     @Override
     public ListIterator<Student> listIterator(int i) {
-        //TODO
-        return null;
+        //TODO - PARCA
+        return new MyIterator<>(i);
     }
 
     @Override
     public List<Student> subList(int i, int i1) {
-        //TODO
+        //TODO - ????
+//        Student[] subList = new Student[i1-i] ;
+//        for(int j=i;j<i1;j++){
+//            subList[j] = temp[j];
+//        }
+//        return List.of(subList);
+        if(i>=0 && i<i1 && i1<size){
+            List<Student> subList = new StudentList();
+            for(int j=i;j<i1;j++){
+                subList.add(temp[j]);
+            }
+            return subList;
+        }
         return null;
     }
 
     @Override
     public boolean addAll(Collection<? extends Student> collection) {
-        //TODO
-        return false;
+        //TODO -
+        Object[] contain = collection.toArray();
+        int leng = contain.length;
+        if(leng == 0) return false;
+        Student[] temp = this.temp;
+        if(leng>size){
+            growSize(leng);
+        }
+        System.arraycopy(contain,0,temp,size,leng);
+        size = size+leng;
+        return true;
     }
 
     @Override
@@ -183,5 +234,65 @@ public class StudentList implements List<Student> {
     public boolean retainAll(Collection<?> collection) {
         //Ignore this for homework
         throw new UnsupportedOperationException();
+    }
+
+    private class MyIterator<Student> implements ListIterator<com.endava.internship.collections.Student> {
+
+        int current_pos;
+
+        MyIterator(){
+            current_pos = 0;
+        }
+
+        MyIterator(int index){
+            current_pos = index;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if(current_pos < size) return true;
+            return false;
+        }
+
+        @Override
+        public com.endava.internship.collections.Student next() {
+            return temp[current_pos++];
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            if(temp[current_pos-1]!= null) return true;
+            return false;
+        }
+
+        @Override
+        public com.endava.internship.collections.Student previous() {
+            return temp[current_pos--];
+        }
+
+        @Override
+        public int nextIndex() {
+            return current_pos++;
+        }
+
+        @Override
+        public int previousIndex() {
+            return current_pos--;
+        }
+
+        @Override
+        public void remove() {
+            StudentList.this.remove(current_pos);
+        }
+
+        @Override
+        public void set(com.endava.internship.collections.Student student) {
+            StudentList.this.set(current_pos,student);
+        }
+
+        @Override
+        public void add(com.endava.internship.collections.Student student) {
+            StudentList.this.add(current_pos,student);
+        }
     }
 }
