@@ -1,6 +1,11 @@
 package com.endava.internship.collections;
 
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Collection;
 
 public class StudentList implements List<Student> {
 
@@ -52,7 +57,6 @@ public class StudentList implements List<Student> {
 
     @Override
     public <T> T[] toArray(T[] ts) {
-        //TODO - ??????
         if(ts.length>=size){
             int i =0;
             for(; i < size; i++){
@@ -111,7 +115,6 @@ public class StudentList implements List<Student> {
 
     @Override
     public void add(int i, Student student) {
-        //TODO - PARCA
         if(size == maxsize){growSize();}
         if(size+1<=maxsize && i<=size && i>=0){
             for(int j=size-1;j>i;j--){
@@ -124,10 +127,6 @@ public class StudentList implements List<Student> {
 
     public void growSize(){
         this.maxsize = maxsize*2;
-        /*Student[] newArr = new Student[maxsize];
-        for(int i = 0; i < size; i++){
-            newArr[i] = temp[i];
-        }*/
         temp = Arrays.copyOf(temp,maxsize);
     }
     public void growSize(int i){
@@ -169,24 +168,16 @@ public class StudentList implements List<Student> {
 
     @Override
     public ListIterator<Student> listIterator() {
-        //TODO - PARCA
         return new MyIterator<>();
     }
 
     @Override
     public ListIterator<Student> listIterator(int i) {
-        //TODO - PARCA
         return new MyIterator<>(i);
     }
 
     @Override
     public List<Student> subList(int i, int i1) {
-        //TODO - ????
-//        Student[] subList = new Student[i1-i] ;
-//        for(int j=i;j<i1;j++){
-//            subList[j] = temp[j];
-//        }
-//        return List.of(subList);
         if(i>=0 && i<i1 && i1<size){
             List<Student> subList = new StudentList();
             for(int j=i;j<i1;j++){
@@ -199,7 +190,6 @@ public class StudentList implements List<Student> {
 
     @Override
     public boolean addAll(Collection<? extends Student> collection) {
-        //TODO -
         Object[] contain = collection.toArray();
         int leng = contain.length;
         if(leng == 0) return false;
