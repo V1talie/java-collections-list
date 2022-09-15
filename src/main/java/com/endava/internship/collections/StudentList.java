@@ -7,20 +7,20 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Collection;
 
-public class StudentList implements List<Student> {
+public class StudentList<T> implements List<T> {
 
     private int size;
     private int maxsize;
-    private Student[] temp;
+    private Object[] temp;
 
     public StudentList() {
         this.maxsize = 10;
-        this.temp = new Student[this.maxsize];
+        this.temp = new Object[this.maxsize];
     }
 
     public StudentList(int desiredSize) {
         this.maxsize = desiredSize;
-        this.temp = new Student[this.maxsize];
+        this.temp = new Object[this.maxsize];
     }
 
     @Override
@@ -34,15 +34,15 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(Object t) {
         for (int i = 0; i < this.size; i++) {
-            if (temp[i].equals(o)) return true;
+            if (temp[i].equals(t)) return true;
         }
         return false;
     }
 
     @Override
-    public Iterator<Student> iterator() {
+    public Iterator<T> iterator() {
         return listIterator(0);
     }
 
@@ -68,19 +68,19 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean add(Student student) {
+    public boolean add(T t) {
         if (size == maxsize) {
             growSize();
         }
-        temp[size++] = student;
+        temp[size++] = t;
         return true;
     }
 
     @Override
-    public boolean remove(Object o) {
-        if (contains(o)) {
+    public boolean remove(Object t) {
+        if (contains(t)) {
             for (int i = 0; i < size; i++) {
-                if (temp[i].equals(o)) {
+                if (temp[i].equals(t)) {
                     temp[i] = null;
                     for (int j = i; j < size; j++) {
                         temp[j] = temp[j + 1];
@@ -102,8 +102,8 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public Student get(int i) {
-        return temp[i];
+    public T get(int i) {
+        return (T) temp[i];
     }
 
     @Override
@@ -117,7 +117,7 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public void add(int i, Student student) {
+    public void add(int i, T t) {
         if (size == maxsize) {
             growSize();
         }
@@ -125,7 +125,7 @@ public class StudentList implements List<Student> {
             for (int j = size - 1; j > i; j--) {
                 temp[j] = temp[j - 1];
             }
-            temp[i] = student;
+            temp[i] = t;
             size++;
         }
     }
@@ -141,11 +141,11 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public Student remove(int i) {
+    public T remove(int i) {
         temp[i] = null;
-        Student oldValue = null;
+        T oldValue = null;
         for (int j = 0; j < size; j++) {
-            oldValue = temp[i];
+            oldValue = (T) temp[i];
             temp[i] = null;
             for (int k = j; k < size; k++) {
                 temp[k] = temp[k + 1];
@@ -173,12 +173,12 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public ListIterator<Student> listIterator() {
+    public ListIterator<T> listIterator() {
         return new MyIterator();
     }
 
     @Override
-    public ListIterator<Student> listIterator(int i) {
+    public ListIterator<T> listIterator(int i) {
         return new MyIterator(i);
     }
 
@@ -203,11 +203,11 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends Student> collection) {
+    public boolean addAll(Collection<? extends T> collection) {
         Object[] contain = collection.toArray();
         int leng = contain.length;
         if (leng == 0) return false;
-        Student[] temp = this.temp;
+        Object[] temp = this.temp;
         if (leng > size) {
             growSize(leng);
         }
@@ -223,7 +223,7 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean addAll(int i, Collection<? extends Student> collection) {
+    public boolean addAll(int i, Collection<? extends T> collection) {
         //Ignore this for homework
         throw new UnsupportedOperationException();
     }
@@ -240,7 +240,7 @@ public class StudentList implements List<Student> {
         throw new UnsupportedOperationException();
     }
 
-    private class MyIterator implements ListIterator<Student> {
+    private class MyIterator implements ListIterator<T> {
 
         int currentPosition;
 
@@ -258,8 +258,8 @@ public class StudentList implements List<Student> {
         }
 
         @Override
-        public Student next() {
-            return temp[currentPosition++];
+        public T next() {
+            return (T) temp[currentPosition++];
         }
 
         @Override
@@ -268,8 +268,8 @@ public class StudentList implements List<Student> {
         }
 
         @Override
-        public Student previous() {
-            return temp[currentPosition--];
+        public T previous() {
+            return (T) temp[currentPosition--];
         }
 
         @Override
@@ -288,13 +288,13 @@ public class StudentList implements List<Student> {
         }
 
         @Override
-        public void set(Student student) {
-            StudentList.this.set(currentPosition, student);
+        public void set(T t) {
+            StudentList.this.set(currentPosition, t);
         }
 
         @Override
-        public void add(Student student) {
-            StudentList.this.add(currentPosition, student);
+        public void add(T t) {
+            StudentList.this.add(currentPosition, t);
         }
     }
 }
