@@ -107,12 +107,12 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
-    public Student set(int i, Student student) {
+    public T set(int i, T t) {
         if (i >= this.size) {
             throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
         }
-        Student oldValue = temp[i];
-        temp[i] = student;
+        T oldValue = (T) temp[i];
+        temp[i] = t;
         return oldValue;
     }
 
@@ -183,7 +183,7 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
-    public List<Student> subList(int i, int i1) {
+    public List<T> subList(int i, int i1) {
         if (i < 0)
             throw new IndexOutOfBoundsException("fromIndex = " + i);
         if (i1 > size)
@@ -192,12 +192,11 @@ public class StudentList<T> implements List<T> {
             throw new IllegalArgumentException("fromIndex(" + i +
                     ") > toIndex(" + i1 + ")");
         if (i == i1) {
-            List<Student> subList = new StudentList();
-            return subList;
+            return new StudentList<>();
         }
-        List<Student> subList = new StudentList();
+        List<T> subList = new StudentList<>();
         for (int j = i; j < i1; j++) {
-            subList.add(temp[j]);
+            subList.add((T) temp[j]);
         }
         return subList;
     }
