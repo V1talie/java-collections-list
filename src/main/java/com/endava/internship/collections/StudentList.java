@@ -49,9 +49,7 @@ public class StudentList implements List<Student> {
     @Override
     public Object[] toArray() {
         Object[] arr = new Object[size];
-        for (int i = 0; i < size; i++) {
-            arr[i] = temp[i];
-        }
+        System.arraycopy(temp, 0, arr, 0, size);
         return arr;
     }
 
@@ -110,6 +108,9 @@ public class StudentList implements List<Student> {
 
     @Override
     public Student set(int i, Student student) {
+        if (i >= this.size) {
+            throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
+        }
         Student oldValue = temp[i];
         temp[i] = student;
         return oldValue;
@@ -183,14 +184,22 @@ public class StudentList implements List<Student> {
 
     @Override
     public List<Student> subList(int i, int i1) {
-        if (i >= 0 && i < i1 && i1 < size) {
+        if (i < 0)
+            throw new IndexOutOfBoundsException("fromIndex = " + i);
+        if (i1 > size)
+            throw new IndexOutOfBoundsException("toIndex = " + i1);
+        if (i > i1)
+            throw new IllegalArgumentException("fromIndex(" + i +
+                    ") > toIndex(" + i1 + ")");
+        if (i == i1) {
             List<Student> subList = new StudentList();
-            for (int j = i; j < i1; j++) {
-                subList.add(temp[j]);
-            }
             return subList;
         }
-        return null;
+        List<Student> subList = new StudentList();
+        for (int j = i; j < i1; j++) {
+            subList.add(temp[j]);
+        }
+        return subList;
     }
 
     @Override
