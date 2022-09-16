@@ -42,11 +42,6 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return listIterator(0);
-    }
-
-    @Override
     public Object[] toArray() {
         Object[] arr = new Object[size];
         System.arraycopy(elementArray, 0, arr, 0, size);
@@ -247,16 +242,23 @@ public class StudentList<T> implements List<T> {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return listIterator();
+    }
+
+
     private class MyIterator implements ListIterator<T> {
 
         private int currentPosition;
+
+        private int lastReturnedElement = -1;
 
         public void setCurrentPosition(int currentPosition) {
             this.currentPosition = currentPosition;
         }
 
         MyIterator() {
-            currentPosition = 0;
         }
 
         MyIterator(int index) {
@@ -271,7 +273,11 @@ public class StudentList<T> implements List<T> {
         @Override
         @SuppressWarnings("unchecked")
         public T next() {
-            return (T) elementArray[currentPosition++];
+            int i = currentPosition;
+            currentPosition++;
+            lastReturnedElement++;
+
+            return (T) elementArray[i];
         }
 
         @Override
@@ -282,20 +288,18 @@ public class StudentList<T> implements List<T> {
         @Override
         @SuppressWarnings("unchecked")
         public T previous() {
-            hasPrevious();
-            return (T) elementArray[currentPosition--];
+            setCurrentPosition(currentPosition - 1);
+            return (T) elementArray[currentPosition];
         }
 
         @Override
         public int nextIndex() {
-            setCurrentPosition(currentPosition + 1);
             return currentPosition;
         }
 
         @Override
         public int previousIndex() {
-            setCurrentPosition(currentPosition - 1);
-            return currentPosition;
+            return currentPosition - 1;
         }
 
         @Override
