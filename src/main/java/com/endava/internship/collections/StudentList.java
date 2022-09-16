@@ -1,11 +1,7 @@
 package com.endava.internship.collections;
 
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Collection;
+import java.util.*;
 
 public class StudentList<T> implements List<T> {
 
@@ -54,6 +50,7 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] ts) {
         if (ts.length >= size) {
             int i = 0;
@@ -102,11 +99,13 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T get(int i) {
         return (T) temp[i];
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T set(int i, T t) {
         if (i >= this.size) {
             throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
@@ -122,7 +121,7 @@ public class StudentList<T> implements List<T> {
             growSize();
         }
         if (size + 1 <= maxsize && i <= size && i >= 0) {
-            for (int j = size - 1; j > i; j--) {
+            for (int j = size; j > i; j--) {
                 temp[j] = temp[j - 1];
             }
             temp[i] = t;
@@ -141,6 +140,7 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public T remove(int i) {
         temp[i] = null;
         T oldValue = null;
@@ -167,7 +167,10 @@ public class StudentList<T> implements List<T> {
     public int lastIndexOf(Object o) {
         int occ = -1;
         for (int i = 0; i < size; i++) {
-            if (temp[i].equals(o)) occ = i;
+            if(temp[i] == null){continue;}
+            if (temp[i].equals(o)){
+                occ = i;
+            }
         }
         return occ;
     }
@@ -183,6 +186,7 @@ public class StudentList<T> implements List<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<T> subList(int i, int i1) {
         if (i < 0)
             throw new IndexOutOfBoundsException("fromIndex = " + i);
@@ -206,10 +210,10 @@ public class StudentList<T> implements List<T> {
         Object[] contain = collection.toArray();
         int leng = contain.length;
         if (leng == 0) return false;
-        Object[] temp = this.temp;
         if (leng > size) {
             growSize(leng);
         }
+        System.out.println(size);
         System.arraycopy(contain, 0, temp, size, leng);
         size = size + leng;
         return true;
@@ -257,6 +261,7 @@ public class StudentList<T> implements List<T> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public T next() {
             return (T) temp[currentPosition++];
         }
@@ -267,6 +272,7 @@ public class StudentList<T> implements List<T> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public T previous() {
             return (T) temp[currentPosition--];
         }
