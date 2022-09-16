@@ -142,16 +142,15 @@ public class StudentList<T> implements List<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T remove(int i) {
-        elementArray[i] = null;
-        T oldValue = null;
-        for (int j = 0; j < size; j++) {
-            oldValue = (T) elementArray[i];
-            elementArray[i] = null;
-            for (int k = j; k < size; k++) {
-                elementArray[k] = elementArray[k + 1];
-            }
+        if (i < 0 || i >= size) {
+            throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
         }
-
+        T oldValue = (T) elementArray[i];
+        elementArray[i] = null;
+        for (int j = i; j < size; j++) {
+            elementArray[j] = elementArray[j + 1];
+        }
+        size--;
         return oldValue;
     }
 
@@ -167,8 +166,10 @@ public class StudentList<T> implements List<T> {
     public int lastIndexOf(Object o) {
         int occ = -1;
         for (int i = 0; i < size; i++) {
-            if(elementArray[i] == null){continue;}
-            if (elementArray[i].equals(o)){
+            if (elementArray[i] == null) {
+                continue;
+            }
+            if (elementArray[i].equals(o)) {
                 occ = i;
             }
         }
