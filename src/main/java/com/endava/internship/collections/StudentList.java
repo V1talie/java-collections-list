@@ -7,16 +7,16 @@ public class StudentList<T> implements List<T> {
 
     private int size;
     private int maxsize;
-    private Object[] temp;
+    private Object[] elementArray;
 
     public StudentList() {
         this.maxsize = 10;
-        this.temp = new Object[this.maxsize];
+        this.elementArray = new Object[this.maxsize];
     }
 
     public StudentList(int desiredSize) {
         this.maxsize = desiredSize;
-        this.temp = new Object[this.maxsize];
+        this.elementArray = new Object[this.maxsize];
     }
 
     @Override
@@ -32,7 +32,7 @@ public class StudentList<T> implements List<T> {
     @Override
     public boolean contains(Object t) {
         for (int i = 0; i < this.size; i++) {
-            if (temp[i].equals(t)) return true;
+            if (elementArray[i].equals(t)) return true;
         }
         return false;
     }
@@ -45,7 +45,7 @@ public class StudentList<T> implements List<T> {
     @Override
     public Object[] toArray() {
         Object[] arr = new Object[size];
-        System.arraycopy(temp, 0, arr, 0, size);
+        System.arraycopy(elementArray, 0, arr, 0, size);
         return arr;
     }
 
@@ -55,7 +55,7 @@ public class StudentList<T> implements List<T> {
         if (ts.length >= size) {
             int i = 0;
             for (; i < size; i++) {
-                ts[i] = (T) temp[i];
+                ts[i] = (T) elementArray[i];
             }
             for (; i < ts.length; i++) {
                 ts[i] = null;
@@ -69,7 +69,7 @@ public class StudentList<T> implements List<T> {
         if (size == maxsize) {
             growSize();
         }
-        temp[size++] = t;
+        elementArray[size++] = t;
         return true;
     }
 
@@ -77,10 +77,10 @@ public class StudentList<T> implements List<T> {
     public boolean remove(Object t) {
         if (contains(t)) {
             for (int i = 0; i < size; i++) {
-                if (temp[i].equals(t)) {
-                    temp[i] = null;
+                if (elementArray[i].equals(t)) {
+                    elementArray[i] = null;
                     for (int j = i; j < size; j++) {
-                        temp[j] = temp[j + 1];
+                        elementArray[j] = elementArray[j + 1];
                     }
                 }
             }
@@ -93,7 +93,7 @@ public class StudentList<T> implements List<T> {
     @Override
     public void clear() {
         for (int i = 0; i < size; i++) {
-            temp[i] = null;
+            elementArray[i] = null;
         }
         size = 0;
     }
@@ -101,7 +101,7 @@ public class StudentList<T> implements List<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T get(int i) {
-        return (T) temp[i];
+        return (T) elementArray[i];
     }
 
     @Override
@@ -110,8 +110,8 @@ public class StudentList<T> implements List<T> {
         if (i >= this.size) {
             throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
         }
-        T oldValue = (T) temp[i];
-        temp[i] = t;
+        T oldValue = (T) elementArray[i];
+        elementArray[i] = t;
         return oldValue;
     }
 
@@ -122,33 +122,33 @@ public class StudentList<T> implements List<T> {
         }
         if (size + 1 <= maxsize && i <= size && i >= 0) {
             for (int j = size; j > i; j--) {
-                temp[j] = temp[j - 1];
+                elementArray[j] = elementArray[j - 1];
             }
-            temp[i] = t;
+            elementArray[i] = t;
             size++;
         }
     }
 
     public void growSize() {
         this.maxsize = maxsize * 2;
-        temp = Arrays.copyOf(temp, maxsize);
+        elementArray = Arrays.copyOf(elementArray, maxsize);
     }
 
     public void growSize(int i) {
         this.maxsize = maxsize + i;
-        temp = Arrays.copyOf(temp, maxsize);
+        elementArray = Arrays.copyOf(elementArray, maxsize);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T remove(int i) {
-        temp[i] = null;
+        elementArray[i] = null;
         T oldValue = null;
         for (int j = 0; j < size; j++) {
-            oldValue = (T) temp[i];
-            temp[i] = null;
+            oldValue = (T) elementArray[i];
+            elementArray[i] = null;
             for (int k = j; k < size; k++) {
-                temp[k] = temp[k + 1];
+                elementArray[k] = elementArray[k + 1];
             }
         }
 
@@ -158,7 +158,7 @@ public class StudentList<T> implements List<T> {
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if (temp[i].equals(o)) return i;
+            if (elementArray[i].equals(o)) return i;
         }
         return -1;
     }
@@ -167,8 +167,8 @@ public class StudentList<T> implements List<T> {
     public int lastIndexOf(Object o) {
         int occ = -1;
         for (int i = 0; i < size; i++) {
-            if(temp[i] == null){continue;}
-            if (temp[i].equals(o)){
+            if(elementArray[i] == null){continue;}
+            if (elementArray[i].equals(o)){
                 occ = i;
             }
         }
@@ -200,7 +200,7 @@ public class StudentList<T> implements List<T> {
         }
         List<T> subList = new StudentList<>();
         for (int j = i; j < i1; j++) {
-            subList.add((T) temp[j]);
+            subList.add((T) elementArray[j]);
         }
         return subList;
     }
@@ -213,8 +213,7 @@ public class StudentList<T> implements List<T> {
         if (leng > size) {
             growSize(leng);
         }
-        System.out.println(size);
-        System.arraycopy(contain, 0, temp, size, leng);
+        System.arraycopy(contain, 0, elementArray, size, leng);
         size = size + leng;
         return true;
     }
@@ -245,7 +244,7 @@ public class StudentList<T> implements List<T> {
 
     private class MyIterator implements ListIterator<T> {
 
-        int currentPosition;
+        private int currentPosition;
 
         MyIterator() {
             currentPosition = 0;
@@ -263,18 +262,18 @@ public class StudentList<T> implements List<T> {
         @Override
         @SuppressWarnings("unchecked")
         public T next() {
-            return (T) temp[currentPosition++];
+            return (T) elementArray[currentPosition++];
         }
 
         @Override
         public boolean hasPrevious() {
-            return temp[currentPosition - 1] != null;
+            return elementArray[currentPosition - 1] != null;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public T previous() {
-            return (T) temp[currentPosition--];
+            return (T) elementArray[currentPosition--];
         }
 
         @Override
