@@ -1,7 +1,11 @@
 package com.endava.internship.collections;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Collection;
 
 public class StudentList<T> implements List<T> {
 
@@ -247,6 +251,10 @@ public class StudentList<T> implements List<T> {
 
         private int currentPosition;
 
+        public void setCurrentPosition(int currentPosition) {
+            this.currentPosition = currentPosition;
+        }
+
         MyIterator() {
             currentPosition = 0;
         }
@@ -268,23 +276,26 @@ public class StudentList<T> implements List<T> {
 
         @Override
         public boolean hasPrevious() {
-            return elementArray[currentPosition - 1] != null;
+            return elementArray[currentPosition--] != null;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public T previous() {
+            hasPrevious();
             return (T) elementArray[currentPosition--];
         }
 
         @Override
         public int nextIndex() {
-            return currentPosition++;
+            setCurrentPosition(currentPosition + 1);
+            return currentPosition;
         }
 
         @Override
         public int previousIndex() {
-            return currentPosition--;
+            setCurrentPosition(currentPosition - 1);
+            return currentPosition;
         }
 
         @Override
