@@ -7,20 +7,20 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Collection;
 
-public class StudentList implements List<Student> {
+public class StudentList<T> implements List<T> {
 
     private int size;
     private int maxsize;
-    private Student[] temp;
+    private Object[] elementArray;
 
     public StudentList() {
         this.maxsize = 10;
-        this.temp = new Student[this.maxsize];
+        this.elementArray = new Object[this.maxsize];
     }
 
     public StudentList(int desiredSize) {
         this.maxsize = desiredSize;
-        this.temp = new Student[this.maxsize];
+        this.elementArray = new Object[this.maxsize];
     }
 
     @Override
@@ -34,31 +34,32 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(Object t) {
         for (int i = 0; i < this.size; i++) {
-            if (temp[i].equals(o)) return true;
+            if (elementArray[i].equals(t)) return true;
         }
         return false;
     }
 
     @Override
-    public Iterator<Student> iterator() {
+    public Iterator<T> iterator() {
         return listIterator(0);
     }
 
     @Override
     public Object[] toArray() {
         Object[] arr = new Object[size];
-        System.arraycopy(temp, 0, arr, 0, size);
+        System.arraycopy(elementArray, 0, arr, 0, size);
         return arr;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] ts) {
         if (ts.length >= size) {
             int i = 0;
             for (; i < size; i++) {
-                ts[i] = (T) temp[i];
+                ts[i] = (T) elementArray[i];
             }
             for (; i < ts.length; i++) {
                 ts[i] = null;
@@ -68,22 +69,22 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean add(Student student) {
+    public boolean add(T t) {
         if (size == maxsize) {
             growSize();
         }
-        temp[size++] = student;
+        elementArray[size++] = t;
         return true;
     }
 
     @Override
-    public boolean remove(Object o) {
-        if (contains(o)) {
+    public boolean remove(Object t) {
+        if (contains(t)) {
             for (int i = 0; i < size; i++) {
-                if (temp[i].equals(o)) {
-                    temp[i] = null;
+                if (elementArray[i].equals(t)) {
+                    elementArray[i] = null;
                     for (int j = i; j < size; j++) {
-                        temp[j] = temp[j + 1];
+                        elementArray[j] = elementArray[j + 1];
                     }
                 }
             }
@@ -96,69 +97,71 @@ public class StudentList implements List<Student> {
     @Override
     public void clear() {
         for (int i = 0; i < size; i++) {
-            temp[i] = null;
+            elementArray[i] = null;
         }
         size = 0;
     }
 
     @Override
-    public Student get(int i) {
-        return temp[i];
+    @SuppressWarnings("unchecked")
+    public T get(int i) {
+        return (T) elementArray[i];
     }
 
     @Override
-    public Student set(int i, Student student) {
+    @SuppressWarnings("unchecked")
+    public T set(int i, T t) {
         if (i >= this.size) {
             throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
         }
-        Student oldValue = temp[i];
-        temp[i] = student;
+        T oldValue = (T) elementArray[i];
+        elementArray[i] = t;
         return oldValue;
     }
 
     @Override
-    public void add(int i, Student student) {
+    public void add(int i, T t) {
         if (size == maxsize) {
             growSize();
         }
         if (size + 1 <= maxsize && i <= size && i >= 0) {
-            for (int j = size - 1; j > i; j--) {
-                temp[j] = temp[j - 1];
+            for (int j = size; j > i; j--) {
+                elementArray[j] = elementArray[j - 1];
             }
-            temp[i] = student;
+            elementArray[i] = t;
             size++;
         }
     }
 
     public void growSize() {
         this.maxsize = maxsize * 2;
-        temp = Arrays.copyOf(temp, maxsize);
+        elementArray = Arrays.copyOf(elementArray, maxsize);
     }
 
     public void growSize(int i) {
         this.maxsize = maxsize + i;
-        temp = Arrays.copyOf(temp, maxsize);
+        elementArray = Arrays.copyOf(elementArray, maxsize);
     }
 
     @Override
-    public Student remove(int i) {
-        temp[i] = null;
-        Student oldValue = null;
-        for (int j = 0; j < size; j++) {
-            oldValue = temp[i];
-            temp[i] = null;
-            for (int k = j; k < size; k++) {
-                temp[k] = temp[k + 1];
-            }
+    @SuppressWarnings("unchecked")
+    public T remove(int i) {
+        if (i < 0 || i >= size) {
+            throw new IndexOutOfBoundsException("Index " + i + " is greater than array size (" + this.size + ")");
         }
-
+        T oldValue = (T) elementArray[i];
+        elementArray[i] = null;
+        for (int j = i; j < size; j++) {
+            elementArray[j] = elementArray[j + 1];
+        }
+        size--;
         return oldValue;
     }
 
     @Override
     public int indexOf(Object o) {
         for (int i = 0; i < size; i++) {
-            if (temp[i].equals(o)) return i;
+            if (elementArray[i].equals(o)) return i;
         }
         return -1;
     }
@@ -167,23 +170,29 @@ public class StudentList implements List<Student> {
     public int lastIndexOf(Object o) {
         int occ = -1;
         for (int i = 0; i < size; i++) {
-            if (temp[i].equals(o)) occ = i;
+            if (elementArray[i] == null) {
+                continue;
+            }
+            if (elementArray[i].equals(o)) {
+                occ = i;
+            }
         }
         return occ;
     }
 
     @Override
-    public ListIterator<Student> listIterator() {
+    public ListIterator<T> listIterator() {
         return new MyIterator();
     }
 
     @Override
-    public ListIterator<Student> listIterator(int i) {
+    public ListIterator<T> listIterator(int i) {
         return new MyIterator(i);
     }
 
     @Override
-    public List<Student> subList(int i, int i1) {
+    @SuppressWarnings("unchecked")
+    public List<T> subList(int i, int i1) {
         if (i < 0)
             throw new IndexOutOfBoundsException("fromIndex = " + i);
         if (i1 > size)
@@ -192,26 +201,24 @@ public class StudentList implements List<Student> {
             throw new IllegalArgumentException("fromIndex(" + i +
                     ") > toIndex(" + i1 + ")");
         if (i == i1) {
-            List<Student> subList = new StudentList();
-            return subList;
+            return new StudentList<>();
         }
-        List<Student> subList = new StudentList();
+        List<T> subList = new StudentList<>();
         for (int j = i; j < i1; j++) {
-            subList.add(temp[j]);
+            subList.add((T) elementArray[j]);
         }
         return subList;
     }
 
     @Override
-    public boolean addAll(Collection<? extends Student> collection) {
+    public boolean addAll(Collection<? extends T> collection) {
         Object[] contain = collection.toArray();
         int leng = contain.length;
         if (leng == 0) return false;
-        Student[] temp = this.temp;
         if (leng > size) {
             growSize(leng);
         }
-        System.arraycopy(contain, 0, temp, size, leng);
+        System.arraycopy(contain, 0, elementArray, size, leng);
         size = size + leng;
         return true;
     }
@@ -223,7 +230,7 @@ public class StudentList implements List<Student> {
     }
 
     @Override
-    public boolean addAll(int i, Collection<? extends Student> collection) {
+    public boolean addAll(int i, Collection<? extends T> collection) {
         //Ignore this for homework
         throw new UnsupportedOperationException();
     }
@@ -240,9 +247,13 @@ public class StudentList implements List<Student> {
         throw new UnsupportedOperationException();
     }
 
-    private class MyIterator implements ListIterator<Student> {
+    private class MyIterator implements ListIterator<T> {
 
         private int currentPosition;
+
+        public void setCurrentPosition(int currentPosition) {
+            this.currentPosition = currentPosition;
+        }
 
         MyIterator() {
             currentPosition = 0;
@@ -258,28 +269,33 @@ public class StudentList implements List<Student> {
         }
 
         @Override
-        public Student next() {
-            return temp[currentPosition++];
+        @SuppressWarnings("unchecked")
+        public T next() {
+            return (T) elementArray[currentPosition++];
         }
 
         @Override
         public boolean hasPrevious() {
-            return temp[currentPosition - 1] != null;
+            return elementArray[currentPosition--] != null;
         }
 
         @Override
-        public Student previous() {
-            return temp[currentPosition--];
+        @SuppressWarnings("unchecked")
+        public T previous() {
+            hasPrevious();
+            return (T) elementArray[currentPosition--];
         }
 
         @Override
         public int nextIndex() {
-            return currentPosition++;
+            setCurrentPosition(currentPosition + 1);
+            return currentPosition;
         }
 
         @Override
         public int previousIndex() {
-            return currentPosition--;
+            setCurrentPosition(currentPosition - 1);
+            return currentPosition;
         }
 
         @Override
@@ -288,13 +304,13 @@ public class StudentList implements List<Student> {
         }
 
         @Override
-        public void set(Student student) {
-            StudentList.this.set(currentPosition, student);
+        public void set(T t) {
+            StudentList.this.set(currentPosition, t);
         }
 
         @Override
-        public void add(Student student) {
-            StudentList.this.add(currentPosition, student);
+        public void add(T t) {
+            StudentList.this.add(currentPosition, t);
         }
     }
 }
